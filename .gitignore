@@ -16,6 +16,9 @@ ScreenCapture_*.png
 ScreenCamera_*.json
 *.exe
 
+# Local private scripts / notes
+VIDEO_SCRIPT_AND_GUIDE.md
+
 # Data directory (keep sample LiDAR frame for demo)
 data/*
 !data/lidar/
