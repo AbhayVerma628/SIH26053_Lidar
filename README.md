@@ -5,11 +5,43 @@
 [![Smart India Hackathon](https://img.shields.io/badge/Smart%20India%20Hackathon-2026-FF9933.svg?style=flat)](https://www.sih.gov.in/)
 [![Problem Statement](https://img.shields.io/badge/PS-SIH26053-E11D48.svg?style=flat)]()
 [![Domain](https://img.shields.io/badge/Domain-Defence%20%7C%20DRDO-047857.svg?style=flat)]()
+[![Edge Compute](https://img.shields.io/badge/Edge%20Platform-Jetson%20Orin%20Nano%20(15W)-76B900.svg?style=flat&logo=nvidia&logoColor=white)]()
+[![Model Backbone](https://img.shields.io/badge/Backbone-Quantized%20RandLA--Net-8B5CF6.svg?style=flat)]()
 [![Tests](https://img.shields.io/badge/Tests-5%2F5%20Passing-10B981.svg?style=flat)]()
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat)](LICENSE)
 
-> Built for **Smart India Hackathon 2026** (Problem Statement: **SIH26053**, Ministry of Defence / DRDO).  
-> An autonomous perception-to-control stack that processes raw 3D LiDAR point clouds into adaptive 2.5D elevation grids, finds collision-free routes via A*, and drives a simulated ground vehicle using real-time Pure Pursuit kinematics.
+> **Smart India Hackathon 2026 Submission** | **Problem Statement:** SIH26053 (Ministry of Defence / DRDO)  
+> **Team:** TeraPulse | **Team ID:** 137735 | **Institute:** IIIT Bhopal  
+> An autonomous perception-to-control stack converting raw 3D LiDAR point clouds into adaptive 2.5D elevation grids, utilizing a **Quantized RandLA-Net** backbone (1.25M params, INT8 TensorRT, ~8.4 ms), multi-resolution A* path planning (47 cells, 28.92 m route), and Pure Pursuit kinematic control on **NVIDIA Jetson Orin Nano (8GB, 15W)** at **41.3 FPS (24.23 ms)**.
+
+---
+
+## 📑 Official Presentation (SIH 2026 Submission Deck)
+
+* 📄 **[Download Presentation (PDF)](docs/SIH26053_TeraPulse_Official_Presentation.pdf)**
+* 📊 **[Download Presentation (PowerPoint .pptx)](docs/SIH26053_TeraPulse_Official_Presentation.pptx)**
+* 🌐 **[Live Interactive Web Prototype & Dashboard](https://abhayverma628.github.io/SIH26053_Lidar/)**
+
+<details open>
+<summary><b>🖼️ Click to expand / collapse Slide Deck Preview (Slides 1 – 6)</b></summary>
+<br>
+
+| Slide 1: Cover & Team Information | Slide 2: Proposed Solution & Innovation |
+| :---: | :---: |
+| [![Slide 1](docs/slides/slide_1.png)](docs/SIH26053_TeraPulse_Official_Presentation.pdf) | [![Slide 2](docs/slides/slide_2.png)](docs/SIH26053_TeraPulse_Official_Presentation.pdf) |
+| *Team TeraPulse (ID: 137735), IIIT Bhopal, Problem Statement SIH26053* | *Adaptive Variable-Resolution 2.5D Grid & 66.2% RAM reduction* |
+
+| Slide 3: Technical Approach & Deep Learning Pipeline | Slide 4: Feasibility, Viability & Edge Benchmarks |
+| :---: | :---: |
+| [![Slide 3](docs/slides/slide_3.png)](docs/SIH26053_TeraPulse_Official_Presentation.pdf) | [![Slide 4](docs/slides/slide_4.png)](docs/SIH26053_TeraPulse_Official_Presentation.pdf) |
+| *Quantized RandLA-Net (1.25M params, INT8 TensorRT) + A\* Planner* | *NVIDIA Jetson Orin Nano (15W) validation @ 41.3 FPS (24.23 ms)* |
+
+| Slide 5: Impact, Defense Benefits & Comparison | Slide 6: Research Citations & Prototype Access |
+| :---: | :---: |
+| [![Slide 5](docs/slides/slide_5.png)](docs/SIH26053_TeraPulse_Official_Presentation.pdf) | [![Slide 6](docs/slides/slide_6.png)](docs/SIH26053_TeraPulse_Official_Presentation.pdf) |
+| *Total darkness & glare invariance, 4.8× compute acceleration* | *RandLA-Net & KITTI citations, QR code & GitHub repository* |
+
+</details>
 
 ---
 
@@ -41,11 +73,11 @@ Tested on real Velodyne LiDAR data (`data/lidar/0001.pcd`, 20,672 points from th
 
 | Metric | Standard Uniform Grid (0.25 m) | TERA PULSE Adaptive 2.5D Grid | Real-World Impact |
 | :--- | :---: | :---: | :--- |
-| **Active Stored Cells** | 2,888 cells | **976 cells** | **66.2% less memory footprint** |
+| **Active Stored Cells** | 2,888 cells | **976 cells** | **66.2% less memory footprint** (active planning window ROI) |
 | **Grid Generation Time** | 115.94 ms | **24.23 ms** | **4.8× faster mapping** |
-| **Operating Frequency** | ~8 FPS | **>35 FPS** | **Comfortably fits in 10–20 Hz sensor loops** |
+| **Edge Compute Latency** | ~8 FPS (115.9 ms) | **41.3 FPS (24.23 ms)** | **NVIDIA Jetson Orin Nano (8GB, 15W)** (exceeds 30 FPS threshold) |
 | **Elevation Profile** | ❌ None | **✅ Full ($Z_{max}, Z_{mean}, \text{slope}$)** | Distinguishes rollable bumps from lethal boulders |
-| **Planned Path** | N/A | **47 cells (28.92 m route)** | Zero-collision path around all obstacles |
+| **Planned Path** | N/A | **47 cells (28.92 m route)** | Zero-collision path through 817 safe corridor cells |
 | **Vehicle Motion Control** | ❌ None | **Pure Pursuit (10 Hz Telemetry)** | Real steering angles $\delta(t)$ & velocity $v(t)$ |
 
 ---
@@ -60,7 +92,8 @@ Tested on real Velodyne LiDAR data (`data/lidar/0001.pcd`, 20,672 points from th
      ├── Statistical Outlier Removal (SOR, 20 neighbors)
      └── RANSAC Ground Plane Estimation
              ↓
-  2. Semantic Terrain Classification
+  2. Semantic Terrain Classification (Quantized RandLA-Net)
+     ├── Architecture: 1.25M parameters, INT8 TensorRT (~8.4 ms inference)
      └── Classes: Ground (0), Static Obstacle (1), Dynamic Object (2), Unknown (3)
              ↓
   3. Adaptive 2.5D Grid Engine
@@ -196,7 +229,10 @@ SIH26053_Lidar/
 │
 ├── docs/                             # SIH 2026 Submission Deliverables
 │   ├── SIH26053_TeraPulse_Official_Presentation.pptx # Official SIH 2026 Presentation (PPTX)
-│   └── SIH26053_TeraPulse_Official_Presentation.pdf  # Official SIH 2026 Presentation (PDF)
+│   ├── SIH26053_TeraPulse_Official_Presentation.pdf  # Official SIH 2026 Presentation (PDF)
+│   ├── slides/                       # High-resolution rendered preview gallery (Slides 1-6)
+│   ├── index.html                    # GitHub Pages interactive live web prototype
+│   └── data.json                     # Real-time mission telemetry dataset
 │
 └── tests/                            # Automated Testing
     └── test_pipeline.py              # 5/5 end-to-end integration tests
