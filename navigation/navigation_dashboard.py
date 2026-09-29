@@ -99,10 +99,11 @@ def build_navigation(points: np.ndarray, labels: np.ndarray):
 
 def style_axis(ax, title: str):
     ax.set_title(title, fontsize=14, fontweight="bold", pad=10)
-    ax.set_xlabel("X (meters)", fontsize=10)
-    ax.set_ylabel("Y (meters)", fontsize=10)
+    ax.set_xlabel("X (meters)", fontsize=11, fontweight="bold")
+    ax.set_ylabel("Y (meters)", fontsize=11, fontweight="bold")
+    ax.tick_params(axis="both", labelsize=10)
     ax.set_aspect("equal", adjustable="box")
-    ax.grid(True, linestyle="--", alpha=0.3)
+    ax.grid(True, linestyle="--", alpha=0.35)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
@@ -143,7 +144,8 @@ def create_dashboard(
         linewidths=0,
     )
     cbar = fig.colorbar(scatter, ax=ax1, fraction=0.046, pad=0.03)
-    cbar.set_label("Elevation Z (m)", fontsize=9)
+    cbar.set_label("Elevation Z (m)", fontsize=11, fontweight="bold")
+    cbar.ax.tick_params(labelsize=10)
     style_axis(ax1, "1. Real 3D LiDAR Point Cloud")
 
     ax1.text(
@@ -152,8 +154,8 @@ def create_dashboard(
         f"Points: {len(points):,}\nSensor: Velodyne HDL-64\nRange: ~60 m",
         transform=ax1.transAxes,
         va="top",
-        fontsize=9,
-        bbox=dict(boxstyle="round,pad=0.4", facecolor="white", alpha=0.92),
+        fontsize=10,
+        bbox=dict(boxstyle="round,pad=0.4", facecolor="white", alpha=0.95),
     )
 
     # --------------------------------------------------------
@@ -164,10 +166,10 @@ def create_dashboard(
             (cell.x - cell.resolution / 2, cell.y - cell.resolution / 2),
             cell.resolution,
             cell.resolution,
-            facecolor=(0.88, 0.28, 0.28),
-            edgecolor="darkred",
-            linewidth=0.4,
-            alpha=0.75,
+            facecolor=(0.92, 0.22, 0.22),
+            edgecolor="#7f1d1d",
+            linewidth=1.2,
+            alpha=0.85,
         )
         ax2.add_patch(rect)
 
@@ -176,10 +178,10 @@ def create_dashboard(
             (cell.x - cell.resolution / 2, cell.y - cell.resolution / 2),
             cell.resolution,
             cell.resolution,
-            facecolor=(0.30, 0.75, 0.45),
-            edgecolor="darkgreen",
-            linewidth=0.25,
-            alpha=0.55,
+            facecolor=(0.18, 0.78, 0.38),
+            edgecolor="#14532d",
+            linewidth=1.0,
+            alpha=0.65,
         )
         ax2.add_patch(rect)
 
@@ -196,15 +198,15 @@ def create_dashboard(
         ),
         transform=ax2.transAxes,
         va="top",
-        fontsize=9,
-        bbox=dict(boxstyle="round,pad=0.4", facecolor="white", alpha=0.92),
+        fontsize=10,
+        bbox=dict(boxstyle="round,pad=0.4", facecolor="white", alpha=0.95),
     )
 
     legend_elements_p2 = [
-        Patch(facecolor=(0.30, 0.75, 0.45), edgecolor="darkgreen", label="Traversable (Drivable)"),
-        Patch(facecolor=(0.88, 0.28, 0.28), edgecolor="darkred", label="Blocked (Obstacle/Rough)"),
+        Patch(facecolor=(0.18, 0.78, 0.38), edgecolor="#14532d", label="Traversable (Drivable)"),
+        Patch(facecolor=(0.92, 0.22, 0.22), edgecolor="#7f1d1d", label="Blocked (Obstacle/Rough)"),
     ]
-    ax2.legend(handles=legend_elements_p2, loc="lower right", framealpha=0.92, fontsize=8.5)
+    ax2.legend(handles=legend_elements_p2, loc="lower right", framealpha=0.95, fontsize=10)
 
     # --------------------------------------------------------
     # PANEL 3 — AUTONOMOUS NAVIGATION (A* PATH + SMOOTH TRAJECTORY)
@@ -242,11 +244,11 @@ def create_dashboard(
         ax3.plot(
             path_x,
             path_y,
-            linewidth=1.8,
+            linewidth=2.4,
             linestyle="--",
-            color="orange",
+            color="#f59e0b",
             marker="o",
-            markersize=3.0,
+            markersize=4.5,
             label="A* Grid Route",
             zorder=6,
         )
@@ -259,7 +261,7 @@ def create_dashboard(
         ax3.plot(
             traj_x,
             traj_y,
-            linewidth=3.2,
+            linewidth=3.8,
             color="#0284c7",
             label="Vehicle Trajectory (Pure Pursuit)",
             zorder=7,
@@ -268,11 +270,11 @@ def create_dashboard(
     ax3.scatter(start.x, start.y, s=200, color="blue", marker="o", label="START", zorder=10)
     ax3.scatter(goal.x, goal.y, s=260, color="crimson", marker="*", label="GOAL", zorder=10)
 
-    ax3.annotate("START", (start.x, start.y), xytext=(8, 8), textcoords="offset points", fontsize=9.5, fontweight="bold", zorder=11)
-    ax3.annotate("GOAL", (goal.x, goal.y), xytext=(8, 8), textcoords="offset points", fontsize=9.5, fontweight="bold", zorder=11)
+    ax3.annotate("START", (start.x, start.y), xytext=(8, 8), textcoords="offset points", fontsize=10.5, fontweight="bold", zorder=11)
+    ax3.annotate("GOAL", (goal.x, goal.y), xytext=(8, 8), textcoords="offset points", fontsize=10.5, fontweight="bold", zorder=11)
 
     style_axis(ax3, "3. Autonomous Navigation & Trajectory")
-    ax3.legend(loc="upper right", framealpha=0.92, fontsize=8.5)
+    ax3.legend(loc="upper right", framealpha=0.95, fontsize=10)
 
     ax3.text(
         0.03,
@@ -285,8 +287,8 @@ def create_dashboard(
         ),
         transform=ax3.transAxes,
         va="top",
-        fontsize=9,
-        bbox=dict(boxstyle="round,pad=0.4", facecolor="white", alpha=0.92),
+        fontsize=10,
+        bbox=dict(boxstyle="round,pad=0.4", facecolor="white", alpha=0.95),
     )
 
     # Common spatial limits for Panels 1, 2, 3
@@ -308,23 +310,24 @@ def create_dashboard(
 
         color_v = "#0284c7"
         ax4.plot(t_vals, v_kmh, linewidth=2.5, color=color_v, label="Speed (km/h)")
-        ax4.set_title("4. Vehicle Speed & Distance Profile", fontsize=12, fontweight="bold", pad=8)
-        ax4.set_xlabel("Time (seconds)", fontsize=10)
-        ax4.set_ylabel("Speed (km/h)", color=color_v, fontsize=10)
+        ax4.set_title("4. Vehicle Speed & Distance Profile", fontsize=14, fontweight="bold", pad=10)
+        ax4.set_xlabel("Time (seconds)", fontsize=11, fontweight="bold")
+        ax4.set_ylabel("Speed (km/h)", color=color_v, fontsize=11, fontweight="bold")
+        ax4.tick_params(axis="both", labelsize=10)
         ax4.tick_params(axis="y", labelcolor=color_v)
-        ax4.grid(True, linestyle="--", alpha=0.3)
+        ax4.grid(True, linestyle="--", alpha=0.35)
 
         ax4_dist = ax4.twinx()
         color_d = "#e11d48"
         ax4_dist.plot(t_vals, dist_goal, linewidth=2.0, linestyle=":", color=color_d, label="Dist to Goal (m)")
-        ax4_dist.set_ylabel("Distance to Goal (m)", color=color_d, fontsize=10)
-        ax4_dist.tick_params(axis="y", labelcolor=color_d)
+        ax4_dist.set_ylabel("Distance to Goal (m)", color=color_d, fontsize=11, fontweight="bold")
+        ax4_dist.tick_params(axis="y", labelsize=10, labelcolor=color_d)
 
         lines_4 = [
             Line2D([0], [0], color=color_v, lw=2.5, label="Velocity (km/h)"),
             Line2D([0], [0], color=color_d, lw=2.0, ls=":", label="Distance to Goal (m)"),
         ]
-        ax4.legend(handles=lines_4, loc="upper right", framealpha=0.9, fontsize=8.5)
+        ax4.legend(handles=lines_4, loc="upper right", framealpha=0.95, fontsize=10)
 
     # --------------------------------------------------------
     # PANEL 5 — TELEMETRY: STEERING ANGLE delta(t) & HEADING
@@ -336,23 +339,24 @@ def create_dashboard(
         color_steer = "#7c3aed"
         ax5.plot(t_vals, steer_vals, linewidth=2.5, color=color_steer, label="Steering Angle δ (deg)")
         ax5.axhline(0, color="gray", linestyle="--", linewidth=0.8)
-        ax5.set_title("5. Dynamic Steering Angle & Heading", fontsize=12, fontweight="bold", pad=8)
-        ax5.set_xlabel("Time (seconds)", fontsize=10)
-        ax5.set_ylabel("Steering Angle (deg)", color=color_steer, fontsize=10)
+        ax5.set_title("5. Dynamic Steering Angle & Heading", fontsize=14, fontweight="bold", pad=10)
+        ax5.set_xlabel("Time (seconds)", fontsize=11, fontweight="bold")
+        ax5.set_ylabel("Steering Angle (deg)", color=color_steer, fontsize=11, fontweight="bold")
+        ax5.tick_params(axis="both", labelsize=10)
         ax5.tick_params(axis="y", labelcolor=color_steer)
-        ax5.grid(True, linestyle="--", alpha=0.3)
+        ax5.grid(True, linestyle="--", alpha=0.35)
 
         ax5_head = ax5.twinx()
         color_head = "#059669"
         ax5_head.plot(t_vals, heading_vals, linewidth=2.0, linestyle="-.", color=color_head, label="Heading θ (deg)")
-        ax5_head.set_ylabel("Vehicle Heading (deg)", color=color_head, fontsize=10)
-        ax5_head.tick_params(axis="y", labelcolor=color_head)
+        ax5_head.set_ylabel("Vehicle Heading (deg)", color=color_head, fontsize=11, fontweight="bold")
+        ax5_head.tick_params(axis="y", labelsize=10, labelcolor=color_head)
 
         lines_5 = [
             Line2D([0], [0], color=color_steer, lw=2.5, label="Steering Angle δ (deg)"),
             Line2D([0], [0], color=color_head, lw=2.0, ls="-.", label="Heading θ (deg)"),
         ]
-        ax5.legend(handles=lines_5, loc="lower right", framealpha=0.9, fontsize=8.5)
+        ax5.legend(handles=lines_5, loc="lower right", framealpha=0.95, fontsize=10)
 
     # Global Title and Branding
     fig.suptitle(
@@ -363,7 +367,7 @@ def create_dashboard(
     )
 
     DASHBOARD_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(DASHBOARD_OUTPUT, dpi=180, bbox_inches="tight")
+    fig.savefig(DASHBOARD_OUTPUT, dpi=300, bbox_inches="tight")
     print(f"[OK] Dashboard successfully saved to: {DASHBOARD_OUTPUT}")
 
     if show_plot:
