@@ -56,9 +56,9 @@ def build_perfect_sih_presentation():
         banner_top = Inches(0.2) if is_two_line else Inches(0.28)
         banner_left = Inches(2.35)
 
-        banner_bg = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, banner_left, banner_top, banner_w, banner_h)
-        banner_bg.fill.solid()
-        banner_bg.fill.fore_color.rgb = BANNER_GRAY
+        # Title text preserved strictly; gray background banner removed
+        banner_bg = slide.shapes.add_textbox(banner_left, banner_top, banner_w, banner_h)
+        banner_bg.fill.background()
         banner_bg.line.fill.background()
 
         btf = banner_bg.text_frame
@@ -405,7 +405,7 @@ def build_perfect_sih_presentation():
 
     # Item 6: Make slide 3 dashboard readable: Crop/enlarge the key traversability grid and path trajectory plots
     if os.path.exists(dash_cropped_path):
-        dash_pic = s3.shapes.add_picture(dash_cropped_path, Inches(5.6), Inches(3.35), width=Inches(7.1))
+        dash_pic = s3.shapes.add_picture(dash_cropped_path, Inches(5.6), Inches(3.35), width=Inches(6.4))
         dash_pic.line.color.rgb = BANNER_GRAY
         dash_pic.line.width = Pt(1.0)
 
